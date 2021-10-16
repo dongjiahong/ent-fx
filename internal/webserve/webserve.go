@@ -6,7 +6,10 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	ginSwagger "github.com/swaggo/gin-swagger"
+	"github.com/swaggo/gin-swagger/swaggerFiles"
 
+	_ "web/docs"
 	"web/internal/pkg/config"
 	"web/internal/pkg/zlog"
 	"web/internal/webserve/api"
@@ -64,6 +67,7 @@ func NewWebServe(opts ...Option) WebServe {
 func newServer() *http.Server {
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
+	r.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	apiV1 := r.Group("api/v1")
 	apiV1.GET("/hello", api.Hello)
