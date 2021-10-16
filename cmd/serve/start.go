@@ -14,6 +14,7 @@ import (
 	"web/internal/pkg/config"
 	"web/internal/pkg/models"
 	"web/internal/pkg/zlog"
+	"web/internal/services/helloserver"
 	"web/internal/webserve"
 )
 
@@ -25,10 +26,25 @@ var startCMD = &cobra.Command{
 	},
 }
 
-func startWeb(conf config.Config, l zlog.Logger) webserve.WebServe {
+func startWeb(conf config.Config, l zlog.Logger, hs helloserver.HelloServer) webserve.WebServe {
 	return webserve.NewWebServe(
+		hs,
 		webserve.SetConfigOption(conf.GetWebConfig()),
 		webserve.SetLoggerOption(l),
+	)
+}
+
+func newHelloServer(l zlog.Logger, dbh models.DBHandler) helloserver.HelloServer {
+	return helloserver.NewHelloServer(
+		helloserver.SetLoggerOption(l),
+		helloserver.SetDBOption(dbh),
+	)
+}
+
+func newDBHandler(lc fx.Lifecycle, conf config.Config) models.DBHandler {
+	return models.NewDBHandler(
+		lc,
+		models.SetConfigOption(conf.GetDBConfig()),
 	)
 }
 
@@ -54,8 +70,9 @@ func start(ctx context.Context) {
 		// fx.NopLogger, // 屏蔽日志
 		fx.Provide(
 			config.NewConfig,
-			models.NewModels,
 			zlog.NewLogger,
+			newDBHandler,
+			newHelloServer,
 			startWeb,
 		),
 		fx.Invoke(register),

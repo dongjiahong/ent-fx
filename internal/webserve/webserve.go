@@ -12,6 +12,7 @@ import (
 	_ "web/docs"
 	"web/internal/pkg/config"
 	"web/internal/pkg/zlog"
+	"web/internal/services/helloserver"
 	"web/internal/webserve/api"
 )
 
@@ -49,13 +50,22 @@ func SetLoggerOption(l zlog.Logger) Option {
 	})
 }
 
-func NewWebServe(opts ...Option) WebServe {
+func SetHttpServer(s *http.Server) Option {
+	return optionFunc(func(ws *webServe) {
+		ws.server = s
+	})
+}
+
+func NewWebServe(hs helloserver.HelloServer, opts ...Option) WebServe {
 	instance := &webServe{}
 	for _, opt := range opts {
 		opt.apply(instance)
 	}
+	if instance.conf == nil {
+		instance.conf = config.NewConfig().GetWebConfig()
+	}
 	if instance.server == nil {
-		instance.server = newServer()
+		instance.server = newServer(hs)
 	}
 	if instance.conf.EndPoint == 0 {
 		// 默认为2354
@@ -64,13 +74,13 @@ func NewWebServe(opts ...Option) WebServe {
 	return instance
 }
 
-func newServer() *http.Server {
+func newServer(helloserver helloserver.HelloServer) *http.Server {
 	r := gin.New()
 	r.Use(gin.Logger(), gin.Recovery())
 	r.GET("swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
 	apiV1 := r.Group("api/v1")
-	apiV1.GET("/hello", api.Hello)
+	apiV1.GET("/hello", api.Hello(helloserver))
 
 	server := &http.Server{
 		Handler: r,

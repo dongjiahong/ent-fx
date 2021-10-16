@@ -1,9 +1,9 @@
 [DBConfig]
-User = ""
-Password = ""
-Host = ""
-DBName = ""
-TablePrefix = ""
+User = "root"
+Password = "root123"
+Host = "172.18.3.2"
+DBName = "storetest"
+TablePrefix = "t_"
 
 [WebConfig]
 EndPoint = 3435
