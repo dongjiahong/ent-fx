@@ -1,0 +1,9 @@
+[DBConfig]
+User = ""
+Password = ""
+Host = ""
+DBName = ""
+TablePrefix = ""
+
+[WebConfig]
+EndPoint = 3435

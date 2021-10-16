@@ -16,5 +16,5 @@ var ServeCMD = &cobra.Command{
 }
 
 func init() {
-	ServeCMD.AddCommand(startCMD, stopCMD)
+	ServeCMD.AddCommand(startCMD)
 }
