@@ -1,5 +1,5 @@
 # ent-fx
-使用ent和fx的web框架模版
+使用fx的web框架模版
 
 ## 组件
 - [x] [fx](https://github.com/uber-go/fx)
@@ -11,3 +11,9 @@
 - [ ] [ent](https://entgo.io/zh/docs/getting-started/)
 
 ## 架构
+
+## 关于fx的使用
+todo
+## 关于ent的使用
+todo
+
